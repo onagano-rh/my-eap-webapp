@@ -40,9 +40,18 @@ jobs:
         whoami
         pwd
         which oc
+        oc whoami
         oc version
-    - name: Check variables
+    - name: Log in to OpenShift
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
+        openshift_token: ${{ env.OPENSHIFT_TOKEN }}
+#        insecure_skip_tls_verify: true
+        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+    - name: Run oc command
       run: |
-        echo ${{ secrets.OPENSHIFT_SERVER }}
+        oc whoami
+        oc status
 
       
