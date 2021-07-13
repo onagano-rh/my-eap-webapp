@@ -51,6 +51,7 @@ jobs:
         namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
     - name: Run oc command
       run: |
+        oc project ${{ secrets.OPENSHIFT_NAMESPACE }} || oc new-project ${{ secrets.OPENSHIFT_NAMESPACE }}
         oc whoami
         oc status
         oc get all
