@@ -40,7 +40,6 @@ jobs:
         whoami
         pwd
         which oc
-        oc whoami
         oc version
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
