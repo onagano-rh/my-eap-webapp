@@ -32,11 +32,17 @@ jobs:
   check-command:
     runs-on: ubuntu-20.04
     needs: greet
+    environment: test
     steps:
     - name: Check oc command version
       run: |
         cat /etc/os-release
+        whoami
+        pwd
         which oc
         oc version
+    - name: Check variables
+      run: |
+        echo ${{ secrets.OPENSHIFT_SERVER }}
 
       
