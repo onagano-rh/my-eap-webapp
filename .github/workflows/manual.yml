@@ -11,8 +11,7 @@ jobs:
     environment: test
     env:
       OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
-      OPENSHIFT_USER: ${{ secrets.OPENSHIFT_USER }}
-      OPENSHIFT_PASSWORD: ${{ secrets.OPENSHIFT_PASSWORD }}
+      OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
       OPENSHIFT_NAMESPACE: ${{ secrets.OPENSHIFT_NAMESPACE }}
       APP_NAME: '' # default to the project name
     steps:
@@ -31,8 +30,7 @@ jobs:
     - name: Log in to OpenShift
       run: |
         oc login \
-          --username "${{ env.OPENSHIFT_USER }}" \
-          --password "${{ env.OPENSHIFT_PASSWORD }}" \
+          --token "${{ env.OPENSHIFT_TOKEN }}" \
           --insecure-skip-tls-verify \
           ${{ env.OPENSHIFT_SERVER }}
     - name: Create Project if not exists
@@ -94,7 +92,7 @@ jobs:
     env:
       REGISTRY: ${{ secrets.REGISTRY }}
       REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
-      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      REGISTRY_PASSWORD: ${{ secrets.OPENSHIFT_TOKEN }}
       OPENSHIFT_NAMESPACE: ${{ secrets.OPENSHIFT_NAMESPACE }}
       APP_NAME: '' # default to the project name
     steps:
