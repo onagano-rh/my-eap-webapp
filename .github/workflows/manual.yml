@@ -56,7 +56,7 @@ jobs:
             -p APPLICATION_NAME=${{ env.APP_NAME }} \
             -p IMAGE_STREAM_NAMESPACE=$(oc project -q) \
             --template=eap73-openjdk11-basic-s2i \
-            -p SOURCE_REPOSITORY_URL=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}.git \
+            -p SOURCE_REPOSITORY_URL=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git \
             -p SOURCE_REPOSITORY_REF=main \
             -p CONTEXT_DIR="" \
             -p MAVEN_ARGS_APPEND="-Dartifact.name=ROOT" \
