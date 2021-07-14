@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-command:
+  oc-command-tasks:
     runs-on: ubuntu-20.04
     environment: test
     env:
@@ -31,12 +31,6 @@ jobs:
           --token "${{ secrets.OPENSHIFT_TOKEN }}" \
           --insecure-skip-tls-verify \
           ${{ env.OPENSHIFT_SERVER }}
-#      uses: redhat-actions/oc-login@v1
-#      with:
-#        openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
-#        openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-#        insecure_skip_tls_verify: true
-#        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
     - name: Create Project if not exists
       run: |
         if ! oc project ${{ env.OPENSHIFT_NAMESPACE }} ; then
@@ -54,6 +48,34 @@ jobs:
           oc replace --force -f \
             https://raw.githubusercontent.com/jboss-container-images/jboss-eap-7-openshift-image/7.3.x/templates/eap73-openjdk11-basic-s2i.json
         fi
+    - name: Create BuildConfig and others if not exists
+      run: |
+        if ! oc get bc ${{ env.APP_NAME }} ; then
+          oc new-app \
+            --name=${{ env.APP_NAME }} \
+            -p APPLICATION_NAME=${{ env.APP_NAME }} \
+            -p IMAGE_STREAM_NAMESPACE=$(oc project -q) \
+            --template=eap73-openjdk11-basic-s2i \
+            -p SOURCE_REPOSITORY_URL=${{ env.GITHUB_SERVER_URL }}/${{ GITHUB_REPOSITORY }}.git \
+            -p SOURCE_REPOSITORY_REF=main \
+            -p CONTEXT_DIR="" \
+            -p MAVEN_ARGS_APPEND="-Dartifact.name=ROOT" \
+            -p MEMORY_LIMIT=512Mi \
+            -e ENABLE_ACCESS_LOG=true \
+            -e DISABLE_EMBEDDED_JMS_BROKER=true
+          # Allow long startup time for EAP.
+          oc set probe dc ${{ APP_NAME }} --startup --open-tcp=8080 --initial-delay-seconds=30 --failure-threshold=27
+          # Manually starts the runtime image build.
+          oc set triggers bc ${{ APP_NAME }} --from-image=${{ APP_NAME }}-build-artifacts:latest --remove
+          # Cancel the first build because new-app command can't wait it.
+          oc cancel-build ${{ APP_NAME }}-build-artifacts-1
+        fi
+    - name: Start build
+      run: |
+        oc start-build ${{ APP_NAME }}-build-artifacts --follow --wait
+    - name: Build runtime image
+      run: |
+        oc start-build ${{ APP_NAME }} --follow --wait
     - name: Last
       run: |
         oc whoami
