@@ -70,14 +70,15 @@ jobs:
           # Cancel the first build because new-app command can't wait it.
           oc cancel-build ${{ env.APP_NAME }}-build-artifacts-1
         fi
-    - name: Start build
+    - name: Start S2I Maven build
       run: |
         oc start-build ${{ env.APP_NAME }}-build-artifacts --follow --wait
-    - name: Build runtime image
+    - name: Start runtime image build
       run: |
         oc start-build ${{ env.APP_NAME }} --follow --wait
-    - name: Last
+    - name: Show all resoureces
       run: |
-        oc whoami
-        oc status
         oc get all
+    - name: Show the route URL
+      run: |
+        echo "https://$( oc get route ${{ env.APP_NAME }} -o jsonpath='{.spec.host}' )/"
