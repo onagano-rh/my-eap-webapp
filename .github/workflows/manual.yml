@@ -17,6 +17,11 @@ jobs:
         ls -al
         which oc
         oc version
+        env | sort
+    - name: Determine app name
+      if: env.APP_NAME == ''
+      run: |
+        echo "APP_NAME=$(basename $PWD)" | tee -a $GITHUB_ENV
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
       with:
@@ -24,9 +29,13 @@ jobs:
         openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
         insecure_skip_tls_verify: true
         namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+    - name: Create project if not exists
+      run: |
+        if ! oc project ${{ env.OPENSHIFT_NAMESPACE }} ; then
+          oc new-project ${{ env.OPENSHIFT_NAMESPACE }}
+        fi
     - name: Run oc command
       run: |
-        oc project ${{ env.OPENSHIFT_NAMESPACE }} || oc new-project ${{ env.OPENSHIFT_NAMESPACE }}
         oc whoami
         oc status
         oc get all
