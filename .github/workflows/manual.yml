@@ -10,8 +10,14 @@ jobs:
     runs-on: ubuntu-20.04
     environment: test
     env:
-      OPENSHIFT_SERVER: https://api.cluster-4fab.4fab.example.opentlc.com:6443
-      OPENSHIFT_NAMESPACE: testproject
+      OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+      OPENSHIFT_USER: ${{ secrets.OPENSHIFT_USER }}
+      OPENSHIFT_PASSWORD: ${{ secrets.OPENSHIFT_PASSWORD }}
+      OPENSHIFT_NAMESPACE: ${{ secrets.OPENSHIFT_NAMESPACE }}
+      APP_NAME: '' # default to the project name
+      REGISTRY: ${{ secrets.REGISTRY }}
+      REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
     steps:
     - name: Check environment
       run: |
@@ -28,7 +34,8 @@ jobs:
     - name: Log in to OpenShift
       run: |
         oc login \
-          --token "${{ secrets.OPENSHIFT_TOKEN }}" \
+          --username "${{ env.OPENSHIFT_USER }}" \
+          --password "${{ env.OPENSHIFT_PASSWORD }}" \
           --insecure-skip-tls-verify \
           ${{ env.OPENSHIFT_SERVER }}
     - name: Create Project if not exists
