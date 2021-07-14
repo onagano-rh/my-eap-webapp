@@ -56,7 +56,7 @@ jobs:
             -p APPLICATION_NAME=${{ env.APP_NAME }} \
             -p IMAGE_STREAM_NAMESPACE=$(oc project -q) \
             --template=eap73-openjdk11-basic-s2i \
-            -p SOURCE_REPOSITORY_URL=${{ env.GITHUB_SERVER_URL }}/${{ GITHUB_REPOSITORY }}.git \
+            -p SOURCE_REPOSITORY_URL=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}.git \
             -p SOURCE_REPOSITORY_REF=main \
             -p CONTEXT_DIR="" \
             -p MAVEN_ARGS_APPEND="-Dartifact.name=ROOT" \
@@ -64,18 +64,18 @@ jobs:
             -e ENABLE_ACCESS_LOG=true \
             -e DISABLE_EMBEDDED_JMS_BROKER=true
           # Allow long startup time for EAP.
-          oc set probe dc ${{ APP_NAME }} --startup --open-tcp=8080 --initial-delay-seconds=30 --failure-threshold=27
+          oc set probe dc ${{ env.APP_NAME }} --startup --open-tcp=8080 --initial-delay-seconds=30 --failure-threshold=27
           # Manually starts the runtime image build.
-          oc set triggers bc ${{ APP_NAME }} --from-image=${{ APP_NAME }}-build-artifacts:latest --remove
+          oc set triggers bc ${{ env.APP_NAME }} --from-image=${{ env.APP_NAME }}-build-artifacts:latest --remove
           # Cancel the first build because new-app command can't wait it.
-          oc cancel-build ${{ APP_NAME }}-build-artifacts-1
+          oc cancel-build ${{ env.APP_NAME }}-build-artifacts-1
         fi
     - name: Start build
       run: |
-        oc start-build ${{ APP_NAME }}-build-artifacts --follow --wait
+        oc start-build ${{ env.APP_NAME }}-build-artifacts --follow --wait
     - name: Build runtime image
       run: |
-        oc start-build ${{ APP_NAME }} --follow --wait
+        oc start-build ${{ env.APP_NAME }} --follow --wait
     - name: Last
       run: |
         oc whoami
