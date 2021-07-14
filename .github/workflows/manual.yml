@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-20.04
     environment: test
     env:
-      OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
-      OPENSHIFT_NAMESPACE: ${{ secrets.OPENSHIFT_NAMESPACE }}
+      OPENSHIFT_SERVER: https://api.cluster-4fab.4fab.example.opentlc.com:6443
+      OPENSHIFT_NAMESPACE: testproject
     steps:
     - name: Check environment
       run: |
@@ -59,7 +59,6 @@ jobs:
             -p SOURCE_REPOSITORY_URL=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git \
             -p SOURCE_REPOSITORY_REF=main \
             -p CONTEXT_DIR="" \
-            -p MAVEN_ARGS_APPEND="-Dartifact.name=ROOT" \
             -p MEMORY_LIMIT=512Mi \
             -e ENABLE_ACCESS_LOG=true \
             -e DISABLE_EMBEDDED_JMS_BROKER=true

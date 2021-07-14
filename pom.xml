@@ -5,7 +5,7 @@
     <groupId>com.example.test</groupId>
     <artifactId>my-eap-webapp</artifactId>
     <version>1.0-SNAPSHOT</version>
-    
+
     <packaging>war</packaging>
     <name>my-eap-webapp</name>
     <description>This is a small web application for EAP.</description>
@@ -23,7 +23,6 @@
         <version.war.plugin>3.3.1</version.war.plugin>
 
         <version.eap.bom>7.3.7.GA</version.eap.bom>
-        <artifact.name>${project.artifactId}</artifact.name>
     </properties>
 
     <repositories>
@@ -93,7 +92,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-	
+
     <dependencies>
         <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>
@@ -107,9 +106,9 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-	
+
     <build>
-		<finalName>${artifact.name}</finalName>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -130,4 +129,32 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>openshift</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>${version.war.plugin}</version>
+                        <configuration>
+                            <warName>ROOT</warName>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
