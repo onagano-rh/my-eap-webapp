@@ -11,16 +11,15 @@
     <description>This is a small web application for EAP.</description>
 
     <properties>
-        <version.java>1.8</version.java>
+        <version.java>11</version.java>
         <maven.compiler.target>${version.java}</maven.compiler.target>
         <maven.compiler.source>${version.java}</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <version.wildfly.maven.plugin>2.0.2.Final</version.wildfly.maven.plugin>
         <version.compiler.plugin>3.8.1</version.compiler.plugin>
-        <version.surefire.plugin>2.22.2</version.surefire.plugin>
-        <version.failsafe.plugin>2.22.2</version.failsafe.plugin>
         <version.war.plugin>3.3.1</version.war.plugin>
+        <version.source.plugin>3.2.1</version.source.plugin>
+        <version.wildfly.maven.plugin>2.0.2.Final</version.wildfly.maven.plugin>
 
         <version.eap.bom>7.3.7.GA</version.eap.bom>
     </properties>
@@ -116,11 +115,17 @@
                 <version>${version.compiler.plugin}</version>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${version.war.plugin}</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${version.source.plugin}</version>
             </plugin>
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
@@ -138,7 +143,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
-                        <version>${version.war.plugin}</version>
                         <configuration>
                             <warName>ROOT</warName>
                         </configuration>
