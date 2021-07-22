@@ -105,3 +105,24 @@ jobs:
     - name: Show the route URL
       run: |
         echo "https://$( oc get route ${{ env.APP_NAME }} -o jsonpath='{.spec.host}' )/"
+
+  push-new-config:
+    name: Push to Config Repo
+    needs:
+    - oc-command-tasks
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: onagano-rh/my-eap-webapp-config
+          ref: main
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+
+      - run: |
+          git config user.name "No Reply"
+          git config user.email "noreply@example.com"
+          git checkout -b work
+          sed -i -E "s|( *applicationImage: +image-registry.openshift-image-registry.svc:5000/myeap-dev/my-eap-webapp:)[^:]+$|\1${GITHUB_SHA::7}|" application/wildfly.yml
+          git add .
+          git commit -m "Update image tag to ${GITHUB_SHA::7}"
+          git push -f origin work
