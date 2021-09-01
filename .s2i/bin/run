@@ -1,0 +1,7 @@
+#!/bin/bash
+echo === begin run ===
+id
+pwd
+ls -al
+echo === end run ===
+exec /usr/local/s2i/run

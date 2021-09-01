@@ -1,0 +1,7 @@
+#!/bin/bash
+echo === begin assemble ===
+id
+pwd
+ls -al
+echo === end assemble ===
+exec /usr/local/s2i/assemble
