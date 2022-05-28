@@ -21,7 +21,7 @@
         <version.source.plugin>3.2.1</version.source.plugin>
         <version.wildfly.maven.plugin>2.0.2.Final</version.wildfly.maven.plugin>
 
-        <version.eap.bom>7.3.7.GA</version.eap.bom>
+        <version.eap.bom>7.4.4.GA</version.eap.bom>
     </properties>
 
     <repositories>
